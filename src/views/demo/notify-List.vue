@@ -51,7 +51,7 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" :disabled="scope.row.status === false " size="small" @click="sendinfo(scope.row.orderId)">发送信息</el-button>
+          <el-button type="text" :disabled="scope.row.status === false " size="small" @click="sendinfo(scope.row.orderId)">再次发送手机短信提醒</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -131,6 +131,7 @@
               type: 'info',
               message: '发送成功'
             })
+            this.getDataList()
           } else {
              this.$message({
               type: 'danger',

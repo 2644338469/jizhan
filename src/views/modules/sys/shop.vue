@@ -190,13 +190,14 @@
           })
         }).catch(() => {})
       },
-      // logHandle (data) {
-      //   console.log(data)
-      //   this.supplierShow = true
-      //   this.$nextTick(() => {
-      //     this.$refs.shopSupplierList.init(data.productId)
-      //   })
-      // }
+      logHandle (data,column,cell,event) {
+        if(column.label !== "操作"){
+        this.supplierShow = true
+        this.$nextTick(() => {
+          this.$refs.shopSupplierList.init(data.productId)
+        })
+      }
+      }
     }
   }
 </script>

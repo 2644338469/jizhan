@@ -142,7 +142,7 @@
         value3: true,
         dataList: [],
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 20,
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
@@ -167,7 +167,7 @@
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
-            'size': this.pageSize || 10
+            'size': this.pageSize || 20
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -224,8 +224,8 @@
       addOrUpdateHandle (id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
-          console.log(this.$refs.addOrUpdate.init(id)+'123456')
+          this.$refs.addOrUpdate.init(id,this.dataList)
+          console.log(this.$refs.addOrUpdate.init(id,this.dataList)+'123456')
         })
       },
       // 产品缩略图

@@ -153,7 +153,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
+      <el-button @click="cancel">取消</el-button>
       <!-- <el-button type="primary" @click="submitUpload()">确定</el-button> -->
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
@@ -166,6 +166,7 @@
     data () {
       return {
         visible: false,
+        dataList: '',
         dataForm: {
           shopName: '',
           shopCount: '',
@@ -210,6 +211,7 @@
         dataRule: {
           shopName: [
             { required: true, message: '商品名不能为空', trigger: 'blur' }
+
           ],
           shopCount: [
             { required: true, message: '商品库存不能为空', trigger: 'blur' }
@@ -242,7 +244,7 @@
       }
     },
     methods: {
-      init (id) {
+      init (id,value) {
         console.log('jinru init'+'112')
         this.visible = true
         this.productId = id || 0
@@ -311,6 +313,7 @@
         } else {
           this.url = 'http://jizhangyl.natapp1.cc/jizhangyl/shop/save'
           this.dataForm = []
+          this.dataList = value
         }
       },
       dataFormSubmit () {
@@ -319,16 +322,13 @@
           console.log(this.cate.id)
           console.log(this.brand.id)
           this.$refs['dataForm'].validate((valid) => {
-              this.dataForm.cateId = this.cate.id
+          this.dataForm.cateId = this.cate.id
           this.dataForm.brandId = this.brand.id
           this.dataForm.shopWhg = this.width + 'x' + this.height + 'x' + this.gao
           this.dataForm.isPaogoods = this.isPaogoods ? 1 : 0
           this.dataForm.shopVolume = this.width * this.height * this.gao
           console.log(!this.dataForm.id)
           console.log(this.dataForm.isPaogoods+'这是是否抛货')
-          // if (this.fileLenght > 0 || !this.dataForm.id) {
-          //   this.$refs.upload.submit()
-          // } else {
           this.$http({
             url: this.$http.adornUrl('/shop/update'),
             method: 'POST',
@@ -434,6 +434,10 @@
       // dataFormSubmit () {
         
       // },
+      cancel() {
+        this.visible = false
+        
+      },
       getCateList () {
         this.$http({
           url: this.$http.adornUrl('/cate/list'),
