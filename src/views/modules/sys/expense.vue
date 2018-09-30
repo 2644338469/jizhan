@@ -175,7 +175,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: "http://jizhangyl.natapp1.cc/jizhangyl/expense/list",
+          url: "https://www.jizhangyl.com/jizhangyl/expense/list",
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,

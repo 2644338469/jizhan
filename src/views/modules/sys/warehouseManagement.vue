@@ -69,10 +69,10 @@
     },
     methods:{
     	CustomsExportOrder () {
-        window.open('http://jizhangyl.natapp1.cc/jizhangyl/shop/export')
+        window.open('https://www.jizhangyl.com/jizhangyl/shop/export')
      },
      WarehouseExportOrder () {
-        window.open('http://jizhangyl.natapp1.cc/jizhangyl/shop/export')
+        window.open('https://www.jizhangyl.com/jizhangyl/shop/export')
      }
     }
   }

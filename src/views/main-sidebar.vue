@@ -19,9 +19,13 @@
             <icon-svg name="sql" class="site-sidebar__menu-icon"></icon-svg>
             <span slot="title">数据报表</span>
           </el-menu-item>
-          <el-menu-item index="后台用户返点" @click="$router.push({ name: 'expense' })">
+          <el-menu-item index="用户管理" @click="$router.push({ name: 'expense' })">
             <icon-svg name="admin" class="site-sidebar__menu-icon"></icon-svg>
-            <span slot="title">后台用户返点</span>
+            <span slot="title">用户管理</span>
+	    </el-menu-item>
+          <el-menu-item index="订单管理" @click="$router.push({ name: 'order-List' })">
+            <icon-svg name="config" class="site-sidebar__menu-icon"></icon-svg>
+            <span slot="title">订单管理</span>
           </el-menu-item>
         </el-submenu>
         <sub-menu

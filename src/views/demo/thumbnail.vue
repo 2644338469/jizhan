@@ -20,7 +20,7 @@
     <el-row>
     <el-form  class="Submission" ref="this.dataForm2" @keyup.enter.native="dataFormSubmit()" label-width="100px">
       <el-upload
-        action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
+        action="https://www.jizhangyl.com/jizhangyl/common/upload"
         list-type="picture-card"
         name='file'
         :on-success="handleAvatarSuccess"
@@ -90,7 +90,7 @@ export default {
       this.dataForm = this.temp
         },
      downs(imgsrc){
-      window.open('http://jizhangyl.natapp1.cc/jizhangyl//common/download?imageUrl='+imgsrc)
+      window.open('https://www.jizhangyl.com/jizhangyl//common/download?imageUrl='+imgsrc)
     },
       photo() {
         this.$http({
@@ -134,19 +134,11 @@ export default {
       //图片提交
       submitUpload () {
         let photosub=[];
-        console.log("提交图片");
-        console.log(this);
-        console.log(this.dialogImageUrl);
-        console.log("这里的长度"+this.photoList.length)
-        console.log("这里的长度"+this.dataForm.length)
-        console.log(this.dataForm)
         for (let i = 0; i < this.dataForm.length; i++) {
           let objdata = new Object();
-          console.log(this.dataForm[i]);
           objdata.imageUrl = this.dataForm[i];
           objdata.imageOrder = i + 1;
           photosub.push(objdata);
-          console.log(this.imglist)
         };
         this.imglist = photosub;
         console.log(JSON.stringify(this.imglist));

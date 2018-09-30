@@ -2,10 +2,10 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.paramKey" placeholder="暂未开发" clearable></el-input>
+        <el-input v-model="dataForm.paramKey" placeholder="请输入" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <el-button @click="getProviderProductByJanOrName()">查询</el-button>
         <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
       </el-form-item>
     </el-form>
@@ -99,7 +99,7 @@
         supplierShow: false,
         dataList: [],
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 20,
         totalPage: 0,
         providerId: '',
         dataListLoading: false,
@@ -136,6 +136,28 @@
           } else {
             this.dataList = []
             this.totalPage = 0
+          }
+          this.dataListLoading = false
+        })
+      },
+      getProviderProductByJanOrName(){
+        this.dataListLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/product/provider/getProviderProductByJanOrName'),
+          method: 'get',
+          params: this.$http.adornParams({
+	    'providerId': this.providerId,
+            'param': this.dataForm.paramKey
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.dataList = data.data
+            this.totalPage = 1
+            this.totalNum = data.data.length
+          } else {
+            this.dataList = []
+            this.totalPage = 0
+            this.totalNum = 0
           }
           this.dataListLoading = false
         })
@@ -192,11 +214,11 @@
       },
       logHandle (data,column,cell,event) {
         if(column.label !== "操作"){
-        this.supplierShow = true
-        this.$nextTick(() => {
-          this.$refs.shopSupplierList.init(data.productId)
-        })
-      }
+          this.supplierShow = true
+          this.$nextTick(() => {
+            this.$refs.shopSupplierList.init(data.productId)
+          })
+        }
       }
     }
   }

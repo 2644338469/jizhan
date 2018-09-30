@@ -2,28 +2,9 @@
   <el-dialog
     title="仓库确认收货"  
     :close-on-click-modal="false"
-    :visible.sync="visible">
+    :visible.sync="visible"
+    width="75%">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-      <el-form-item label="供应商" prop="prviderName">
-        <el-input v-model="dataForm.prviderName" :disabled="true"></el-input>
-      </el-form-item>
-      <el-form-item label="货款帐期/天" prop="loanDate">
-        <el-input v-model="dataForm.loanDate" :disabled="true" placeholder="货款帐期"></el-input>
-      </el-form-item>
-      <el-table v-if="orderDetail.length" :data="orderDetail" border style="width: 100%">
-        <el-table-column fixed prop="productJancode" label="商品JAN CODE">
-        </el-table-column>
-        <el-table-column prop="productName" label="商品名称">
-        </el-table-column>
-        <el-table-column prop="productPrice" label="商品金额">
-        </el-table-column>
-        <el-table-column prop="productQuantity" label="采购数量" width="80">
-        </el-table-column>
-      </el-table>
-      <el-row :gutter="20">
-        <el-col :span="4" :push="17"><div class="grid-content bg-purple"><span style="font-size:16px">总计金额:</span></div></el-col>
-        <el-col :span="4" :push="17"><div class="grid-content bg-purple-light"><span style="font-size:18px;color:#F56C6C">{{OrderTotalAmount}}</span></div></el-col>
-      </el-row>
       <el-row>
         <el-collapse>
           <el-collapse-item v-for="(list,index) in confirmDatList">
@@ -31,7 +12,16 @@
               第{{index+1}}次已完成实收
             </template>
             <el-table v-if="list.purchaseConfirmDetailList.length" :data="list.purchaseConfirmDetailList" border style="width: 100%">
-              <el-table-column fixed prop="productJancode" label="商品JAN CODE">
+              <el-table-column
+                prop="productImage"
+                width="90"
+                align="center"
+                label="商品图片">
+                <template slot-scope="scope">
+                  <img v-bind:src="scope.row.productImage" style="height:50px;width:50px" />
+                </template>
+              </el-table-column>
+              <el-table-column prop="productJancode" label="商品JAN CODE">
               </el-table-column>
               <el-table-column prop="productName" label="商品名称">
               </el-table-column>
@@ -56,7 +46,16 @@
               实收
             </template>
             <el-table v-if="orderDetail.length" :data="orderDetail" border style="width: 100%">
-              <el-table-column fixed prop="productJancode" label="商品JAN CODE">
+              <el-table-column
+                prop="productImage"
+                width="90"
+                align="center"
+                label="商品图片">
+                <template slot-scope="scope">
+                  <img v-bind:src="scope.row.productImage" style="height:50px;width:50px" />
+                </template>
+              </el-table-column>
+              <el-table-column prop="productJancode" label="商品JAN CODE">
               </el-table-column>
               <el-table-column prop="productName" label="商品名称">
               </el-table-column>
@@ -71,40 +70,29 @@
             <el-row :gutter="20">
               <el-col :span="17">
                 <div class="voucher clearfix">
+                  <p class="title">添加凭证</p>
                   <el-upload
-                    class="avatar-uploader"
-                    action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess0">
-                    <img v-if="imageUrl0" :src="imageUrl0" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon">添加收货凭证</i>
+                    action="https://www.jizhangyl.com/jizhangyl/common/upload"
+                    list-type="picture-card"
+                    name='file'
+                    :on-success="handleAvatarSuccess"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove">
+                    <i class="el-icon-plus"></i>
                   </el-upload>
-                  <el-upload
-                    class="avatar-uploader"
-                    action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess1"
-                    :before-upload="beforeAvatarUpload">
-                    <img v-if="imageUrl1" :src="imageUrl1" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon">添加收货凭证</i>
-                  </el-upload>
-                  <el-upload
-                    class="avatar-uploader"
-                    action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess2">
-                    <img v-if="imageUrl2" :src="imageUrl2" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon">添加收货凭证</i>
-                  </el-upload>
+                  <el-dialog :visible.sync="dialogVisible">
+                    <img width="100%" :src="dialogImageUrl" alt="">
+                  </el-dialog>
+                  <p>请添加:到库图片,收货图片及收货人签字凭证</p>
                 </div>
               </el-col>
               <el-col :span ="7" style="padding-left: 10px;padding-right: 10px;padding-top: 80px;">
                 <el-row :gutter="20">
-                  <el-col :span="18"><div class="grid-content bg-purple"><span style="font-size:16px">总计金额:</span></div></el-col>
-                  <el-col :span="6"><div class="grid-content bg-purple-light"><span style="font-size:18px;color:#F56C6C">{{isNaN(ActualTotalAmount) ? 0 : ActualTotalAmount}}</span></div></el-col>
+                  <el-col :span="11" style="padding: 0;"><div class="grid-content bg-purple textRight"><span style="font-size:16px">总计金额:</span></div></el-col>
+                  <el-col :span="13" style="padding: 0;"><div class="grid-content bg-purple-light"><span style="font-size:18px;color:#F56C6C">{{isNaN(ActualTotalAmount) ? 0 : ActualTotalAmount}}</span></div></el-col>
                 </el-row>
                 <el-row :gutter="20">
-                  <el-col :offset="12"><el-button type="primary" @click="submitUpload()">提交</el-button></el-col>
+                  <el-col class="textRight"><el-button type="primary" @click="submitUpload()">提交</el-button></el-col>
                 </el-row>
               </el-col>
             </el-row>
@@ -114,148 +102,10 @@
           <i class="el-icon-circle-plus-outline" @click="AddCollectShop()"></i>
         </el-row>
       </el-row>
-      <el-row>
-        <el-collapse>
-          <el-collapse-item v-for="(list,index) in CurrentPay">
-            <template slot="title">
-              第{{index+1}}次已完成付款
-            </template>
-            <el-table v-if="list.purchasePayDetailList.length" :data="list.purchasePayDetailList" border style="width: 100%">
-              <el-table-column fixed prop="productJancode" label="商品JAN CODE">
-              </el-table-column>
-              <el-table-column prop="productName" label="商品名称">
-              </el-table-column>
-              <el-table-column prop="productPrice" label="商品金额">
-              </el-table-column>
-              <el-table-column prop="productQuantity" label="实收数量" width="80">
-              </el-table-column>
-            </el-table>
-            <el-row >
-              <el-col :span="17">
-                <div class="listImg" v-for="(listImg,index) in list.certList">
-                  <a :href="listImg" target="view_window"><img :src="listImg" alt="当前为Excel文件,点击下载预览"></a>
-                </div>
-              </el-col>
-              <el-col :span="7">
-                <el-row :gutter="20">
-                  <el-col :span="15"><div class="grid-content bg-purple"><span style="font-size:16px">实付金额:</span></div></el-col>
-                  <el-col :span="6"><div class="grid-content bg-purple-light"><span style="font-size:18px;color:#F56C6C">{{list.payAmount}}</span></div></el-col>
-                  <el-col style="padding-top: 5px;">
-                    <el-input
-                      type="textarea"
-                      :rows="2"
-                      :disabled="true"
-                      placeholder="请输入内容"
-                      v-model="list.comment">
-                    </el-input>
-                  </el-col>
-                </el-row>
-                
-              </el-col>
-            </el-row>
-          </el-collapse-item>
-        </el-collapse>
+      <el-row style="width:100%;text-align: center;">
+        <el-button class="btn" @click="EndSubmit()">完结实收</el-button>
       </el-row>
-      <el-row>
-        <span style="font-size:20px;color:#303133">货款结算</span>
-        <span style="float: right;">账期日:{{this.time}}</span>
-        <el-collapse>
-          <el-collapse-item v-for="(PaymentGood,index) in PaymentGoods">
-            <template slot="title">
-              付款
-            </template>
-             <el-row>
-              <el-col :span="20">
-                <el-table v-if="CurrentRecv.length" :data="CurrentRecv" border style="width: 100%">
-                  <el-table-column fixed prop="productJancode" label="商品JAN CODE" height="67px">
-                  </el-table-column>
-                  <el-table-column prop="productName" label="商品名称"  height="67px">
-                  </el-table-column>
-                  <el-table-column prop="productQuantity" label="入库数量"  height="67px">
-                  </el-table-column>
-                  <el-table-column prop="productQuantity" label="实付数量" width="80" height="67px">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.actualNum" size="mini" placeholder="请输入采购数量"></el-input>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-col>
-              <el-col :span="4" style="border-right: 1px solid #ebeef5;border-top: 1px solid #ebeef5;">
-                  {{AmountOfMoney}}
-                  <el-col>
-                    <div class="shifont">实付金额</div>
-                  </el-col>
-                  <el-col v-for="num of nums">
-                    <div class="sdfsf">{{isNaN(num) ? 0 : num}}</div>
-                  </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="17">
-                <div class="voucher clearfix">
-                  <el-upload
-                    class="avatar-uploader"
-                    action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess3">
-                    <img v-if="imageUrl3" :src="imageUrl3" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon">添加收货凭证</i>
-                  </el-upload>
-                  <el-upload
-                    class="avatar-uploader"
-                    action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess4">
-                    <img v-if="imageUrl4" :src="imageUrl4" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon">添加收货凭证</i>
-                  </el-upload>
-                  <el-upload
-                    class="avatar-uploader"
-                    action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess5">
-                    <img v-if="imageUrl5" :src="imageUrl5" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon">添加收货凭证</i>
-                  </el-upload>
-                </div>
-              </el-col>
-              <el-col :span ="7" style="padding-left: 10px;padding-right: 10px;padding-top: 10px;">
-                <el-row :gutter="20">
-                  <el-col :span="15"><div class="grid-content bg-purple"><span style="font-size:16px">总计金额:</span></div></el-col>
-                  <el-col :span="6"><div class="grid-content bg-purple-light"><span style="font-size:18px;color:#F56C6C">{{isNaN(PaymentAmount) ? 0 : PaymentAmount}}</span></div></el-col>
-                  <el-col :span="13"><div class="grid-content bg-purple"><span style="font-size:16px">手动调整:</span></div></el-col>
-                  <el-col :span="11">
-                    <div class="grid-content bg-purple-light">
-                        <el-input size="mini" v-model="adjustment" placeholder="请输入调整金额"></el-input>  
-                    </div>
-                  </el-col>
-                  <el-col style="padding-top: 5px;">
-                    <el-input
-                      type="textarea"
-                      :rows="2"
-                      placeholder="请输入内容"
-                      v-model="textarea">
-                    </el-input>
-                  </el-col>
-                  <el-col :span="15"><div class="grid-content bg-purple"><span style="font-size:16px">最终付款:</span></div></el-col>
-                  <el-col :span="6"><div class="grid-content bg-purple-light"><span style="font-size:18px;color:#F56C6C">{{isNaN(FinalAmount) ? 0 : FinalAmount}}</span></div></el-col>
-                </el-row>
-                <el-row :gutter="20">
-                  <el-col :offset="12" style="padding-top: 10px;"><el-button type="primary" @click="submitPayment()">提交</el-button></el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </el-collapse-item>
-        </el-collapse>
-        <el-row>
-          <i class="el-icon-circle-plus-outline" @click="AddPaymentGoods()"></i>
-        </el-row>
-      </el-row>
-      
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="OrderEnd" style="width: 100%;background: red;border: red;">订单完结</el-button>
-    </span>
   </el-dialog>
 </template>
 
@@ -265,8 +115,11 @@
     data () {
       return {
         dataForm: {},
+        dataForm1:[],
         visible: false,
+        dialogVisible: false,
         orderId: '',
+        loanDate:'',
         orderDetail: [],
         confirmData: [],
         CurrentRecv: [],
@@ -280,32 +133,14 @@
         CurrentPay:[],
         PaymentGoods:[],
         imageUrl: '',
-        imageUrl0: '',
-        imageUrl1: '',
-        imageUrl2: '',
-        imageUrl3: '',
-        imageUrl4: '',
-        imageUrl5: '',
+        dialogImageUrl:'',
         shopInfo: [],
         dataRule: {},
         activeNames: [],
         items:[],
-        certUrls1:[],
-        certUrls2:[],
-        adjustment: 0 ,
-        textarea: '',
-        payment:0,
-        time:0
       }
     },
     computed: {
-      OrderTotalAmount () {
-        let total = 0
-        for (var i = 0; i < this.orderDetail.length; i++) {
-          total = total + (this.orderDetail[i].productQuantity * this.orderDetail[i].productPrice)
-        }
-        return total
-      },
       ActualTotalAmount () {
         let total = 0
         console.log(this.orderDetail.length)
@@ -314,39 +149,6 @@
           console.log(total)
         }
         return total
-      },
-      AmountOfMoney () {
-        let total = 0;
-        let num =[];
-        for (var i = 0; i < this.CurrentRecv.length; i++) {
-          this.CurrentRecv[i].AOMoney =this.CurrentRecv[i].productPrice * this.CurrentRecv[i].actualNum;
-          num.push(this.CurrentRecv[i].AOMoney)
-        }
-        console.log('这是对象');
-        this.nums=num;
-        console.log(this.nums)
-        // return num
-      },
-      //付款总计金额
-      PaymentAmount () {
-        let total = 0
-        console.log(this.CurrentRecv.length)
-        for (var i = 0; i < this.CurrentRecv.length; i++) {
-          total = total + (this.CurrentRecv[i].productPrice * this.CurrentRecv[i].actualNum)
-          console.log(total)
-        }
-        return total
-      },
-      //计算最终付款金额
-      FinalAmount () {
-        console.log('最终付款')
-        let total = 0
-        console.log(this.nums)
-        for (var i = 0; i < this.nums.length; i++) {
-         total += this.nums[i];
-        }
-        this.payment=total-this.adjustment
-        return total-this.adjustment
       }
     },
     methods: {
@@ -364,9 +166,6 @@
         }
         this.getConfirmList()
         this.getOrderDetail()
-        this.getCurrentRecv ()
-        this.getCurrentPay () 
-        this.getTime ()
       },
       //提交1-n次实收数据
       submitUpload () {
@@ -380,16 +179,16 @@
           this.items=submitdata
         };
         let Urls='';
-        for(let i=0;i<this.certUrls1.length;i++){
-          Urls +=this.certUrls1[i]+','
+        for(let i=0;i<this.dataForm1.length;i++){
+          Urls +=this.dataForm1[i]+','
         };
         Urls=Urls.substring(0,Urls.length-1);
-        console.log(Urls);
         this.$http({
           url: this.$http.adornUrl('/purchase/order/confirmOrder'),
           method: 'POST',
           data: this.$http.adornData({
             'orderId': this.dataForm.orderId,
+            'loanDate':this.dataForm.loanDate,
             'providerId': this.dataForm.providerId,
             'items': JSON.stringify(this.items),
             'certUrls':JSON.stringify(Urls)
@@ -409,52 +208,6 @@
             this.$message.error(data.msg)
           }
         })
-        location.reload(2000)
-      },
-      //提交付款
-      submitPayment () {
-        let submitdata=[];
-        for (let i = 0; i < this.CurrentRecv.length; i++) {
-          let shopInfo = new Object();
-          console.log(this.CurrentRecv[i].productJancode);
-          shopInfo.productId = this.CurrentRecv[i].productId;
-          shopInfo.productQuantity = parseInt(this.CurrentRecv[i].actualNum);
-          submitdata.push(shopInfo);
-          this.items=submitdata
-        };
-        let Urls='';
-        for(let i=0;i<this.certUrls2.length;i++){
-          Urls +=this.certUrls2[i]+','
-        };
-        console.log(this.certUrls2.length);
-        Urls=Urls.substring(0,Urls.length-1);
-        this.$http({
-          url: this.$http.adornUrl('/purchase/order/orderPay'),
-          method: 'POST',
-          data: this.$http.adornData({
-            'orderId': this.dataForm.orderId,
-            'providerId': this.dataForm.providerId,
-            'items': JSON.stringify(this.items),
-            'certUrls':JSON.stringify(Urls),
-            'payAmount':this.payment,
-            'comment':this.textarea
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.$message({
-              message: '操作成功',
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          } else {
-            this.$message.error(data.msg)
-          }
-        })
-        location.reload(2000)
       },
       //获取已完成实收数据
       getConfirmList(){
@@ -491,71 +244,6 @@
           }
        })
       },
-      //获取时间戳
-      getTime (){
-        this.$http({
-          url: this.$http.adornUrl('/purchase/order/getLoanDate'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'orderId': this.orderId
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.time = data.data
-          } else {
-            this.$message.error(data.msg)
-          }
-       })
-      },
-      //获取付款时展示的仓库收货信息
-      getCurrentRecv () {
-        this.$http({
-          url: this.$http.adornUrl('/purchase/order/getCurrentRecv'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'orderId': this.orderId
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.CurrentRecv = data.data
-          } else {
-            this.$message.error(data.msg)
-          }
-       })
-      },
-      //获取历史付款记录
-      getCurrentPay () {
-        this.$http({
-          url: this.$http.adornUrl('/purchase/order/getPayList'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'orderId': this.orderId
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.CurrentPay = data.data
-            console.log(this.CurrentPay+'这是历史数据')
-            // this.time = data.data.payDate
-          } else {
-            this.$message.error(data.msg)
-          }
-       })
-      },
-      //订单完结
-      OrderEnd () {
-        this.$http({
-          url: this.$http.adornUrl('/purchase/order/finish'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'orderId': this.orderId
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-          } else {
-            this.$message.error(data.msg)
-          }
-       })
-      },
       //添加实收列表
       AddCollectShop(){
         let num = 1;
@@ -563,54 +251,38 @@
         this.lists.push(num);
         console.log(this.lists)
       },
-      //添加实付列表
-      AddPaymentGoods(){
-        let num = 1;
-        let a=[];
-        this.PaymentGoods.push(num);
+      //完结实收
+      EndSubmit(){
+        this.$http({
+          url: this.$http.adornUrl('/purchase/order/finishConfirm'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'orderId': this.orderId
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+          } else {
+            this.$message.error(data.msg)
+          }
+       })
       },
       //添加实收凭证
-      handleAvatarSuccess0(res, file) {
-        this.imageUrl0 = res.data;
-        this.certUrls1.push(this.imageUrl0);
-        // console.log(this.imageUrl0)
+      handleAvatarSuccess(res, file) {
+        this.dialogImageUrl = res.data;
+        console.log(res.data);
+        this.dataForm1.push(this.dialogImageUrl);
+        console.log(this.dataForm1);
       },
-      handleAvatarSuccess1(res, file) {
-        this.imageUrl1 = res.data;
-        this.certUrls1.push(this.imageUrl1);
-        // console.log(this.certUrls)
+      handleRemove(file, fileList) {
+        console.log(file.response.data);
+        this.dialogImageUrl = file.response.data;
+        let index = this.dataForm1.indexOf(this.dialogImageUrl);
+        this.dataForm1.splice(index,1);
+        console.log(this.dataForm1)
       },
-      // beforeAvatarUpload(file) {
-      //   const isJPG = file.type === 'image/jpeg';
-      //   const isLt2M = file.size / 1024 / 1024 < 2;
-
-      //   if (!isJPG) {
-      //     this.$message.error('上传头像图片只能是 JPG 格式!');
-      //   }
-      //   if (!isLt2M) {
-      //     this.$message.error('上传头像图片大小不能超过 2MB!');
-      //   }
-      //   return isJPG && isLt2M;
-      // },
-      handleAvatarSuccess2(res, file) {
-        this.imageUrl2 = res.data;
-        this.certUrls1.push(this.imageUrl2);
-        // console.log(this.imageUrl2 = res.data)
-      },
-      handleAvatarSuccess3(res, file) {
-        this.imageUrl3 = res.data;
-        this.certUrls2.push(this.imageUrl3);
-        // console.log(this.imageUrl0)
-      },
-      handleAvatarSuccess4(res, file) {
-        this.imageUrl4 = res.data;
-        this.certUrls2.push(this.imageUrl4);
-        // console.log(this.certUrls)
-      },
-      handleAvatarSuccess5(res, file) {
-        this.imageUrl5 = res.data;
-        this.certUrls2.push(this.imageUrl5);
-        // console.log(this.imageUrl2 = res.data)
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
       }
   }
 }
@@ -738,4 +410,16 @@ img{
   width: 130px;
   height: 130px;
 }
+.title{
+    font-size: 20px;
+    margin-top: 20px;
+  }
+  .textRight{
+    text-align: right;
+  }
+  .btn{
+    width: 90%;
+    background-color: red;
+    color: #fff;
+  }
 </style>

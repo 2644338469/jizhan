@@ -15,11 +15,10 @@
       v-loading="dataListLoading"
       style="width: 100%;">
       <el-table-column
-        prop="id"
+        prop="expressNum"
         header-align="center"
         align="center"
-        width="40"
-        label="ID">
+        label="物流单号">
       </el-table-column>
       <el-table-column
         prop="name"
@@ -147,7 +146,7 @@
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
-            'size': this.pageSize || 10
+            'size': this.pageSize || 20
           })
         }).then(({data}) => {
           if (data && data.code === 0) {

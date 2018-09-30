@@ -62,14 +62,14 @@
     },
     methods: {
     download(time) {
-        window.open("http://jizhangyl.natapp1.cc/jizhangyl/order/report/exportForBusiness?t=1536896108035&type=develop&date="+time+"&inviteCode="+this.invitezi)
+        window.open("https://www.jizhangyl.com/jizhangyl/order/report/exportForBusiness?t=1536896108035&type=develop&date="+time+"&inviteCode="+this.invitezi)
 
     },
     init(val) {
         this.dialogVisible = true
         this.$emit('refreshOutDataList')
         this.$http({
-          // url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/list',
+          // url: 'https://www.jizhangyl.com/jizhangyl/shop/list',
           url: this.$http.adornUrl('order/report/findImportList'),
           method: 'get',
           params: this.$http.adornParams({
@@ -88,7 +88,7 @@
           this.dataListLoading = false
         })
     //     this.$http({
-    //         url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/detail',
+    //         url: 'https://www.jizhangyl.com/jizhangyl/shop/detail',
     //         method: 'get',
     //         params: {
     //           'inviteCode': this.inviteCode

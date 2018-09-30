@@ -1,13 +1,33 @@
 <template>
 	<div class="mod-demo-echarts">
-    <el-form :inline="true" :model="dataForm">
-      <el-form-item>
-        <el-input v-model="searchKeyword" placeholder="商品名称" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="searchPurchase()">查询</el-button>
-      </el-form-item>
-    </el-form>
+    <el-row :gutter="20">
+      <el-col :span="20">
+        <el-form :inline="true" :model="dataForm">
+          <el-form-item>
+            <el-input v-model="searchKeyword" placeholder="商品名称Jcode仓库打包识别码搜索" clearable></el-input>
+          </el-form-item>
+          <el-form-item>
+	         <template>
+              <el-select v-model="orderStatus" filterable placeholder="请选择">
+                  <el-option
+                      v-for="item in status"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                  </el-option>
+              </el-select>
+            </template>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="search()">查询</el-button>
+            <el-button type="success" @click="getExport()">导出</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+      <el-col :span="4" style="text-align: right;">
+        <el-button type="primary" icon="el-icon-refresh" @click="refresh()"></el-button>
+      </el-col>
+    </el-row>
     <el-table
       :data="dataList"
       border
@@ -24,6 +44,13 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="packCode"
+        header-align="center"
+        align="center"
+        width="100"
+        label="打包识别码">
+      </el-table-column>
+      <el-table-column
         prop="productJancode"
         header-align="center"
 				width="130"
@@ -37,14 +64,21 @@
         label="商品名称">
       </el-table-column>
       <el-table-column
-        prop="currentStock"
+        prop="productStock"
         header-align="center"
         align="center"
         width="85"
         label="当前库存">
       </el-table-column>
       <el-table-column
-        prop="wayNum"
+        prop="todoOutNum"
+        header-align="center"
+        align="center"
+        width="95"
+        label="即将出库数(已付款未打包)">
+      </el-table-column>
+      <el-table-column
+        prop="wayStock"
         header-align="center"
         align="center"
         width="80"
@@ -68,10 +102,10 @@
         fixed="right"
         header-align="center"
         align="center"
-        width="150"
+        width="100"
         label="出库记录">
         <template slot-scope="scope">
-          <el-button type="primary" disabled round size="mini">点击进入</el-button>
+          <el-button type="primary" round size="mini"  @click="goto(scope.row.productId)">点击进入</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,6 +125,16 @@
   export default {
     data () {
       return {
+	status: [
+         {
+           value: '0',
+           label: '上架'
+         },
+         {
+           value: '1',
+           label: '下架'
+       	}],
+        orderStatus:'',
         dataForm: {
           userName: ''
         },
@@ -103,7 +147,7 @@
         value3: true,
         dataList: [],
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 20,
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
@@ -123,7 +167,7 @@
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
-            'size': this.pageSize || 10
+            'size': this.pageSize || 20
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -137,6 +181,33 @@
           }
           this.dataListLoading = false
         })
+      },
+	   //搜索
+      search () {
+        this.dataListLoading = true
+          this.$http({
+          url: this.$http.adornUrl('/repository/product/findByCriteria'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'param':this.searchKeyword,
+            'status': this.orderStatus,
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.dataList = data.data
+            this.totalPage = data.data.totalPage
+            this.totalNum = data.data.totalPage * this.pageSize
+          } else {
+            this.dataList = []
+            this.totalPage = 0
+            this.totalNum = 0
+          }
+          this.dataListLoading = false
+        })
+      },
+      //导出exl
+      getExport(){
+        window.open('https://www.jizhangyl.com/jizhangyl//repository/product/exportByCriteria?param=' + this.searchKeyword + '&status=' + this.orderStatus)
       },
       // 每页数
       sizeChangeHandle (val) {
@@ -170,10 +241,26 @@
         } else {
           return false
         }
+      },
+	goto(id) {
+        console.log(id)
+        this.$router.push({path: '/deliveryDetail', query: {providerId: id}})
+      },
+      refresh () {
+        this.getDataList ()
       }
     }
   }
 </script>
 
 <style>
+.el-row{
+  width: 100%;
+}
+tr{
+  height: 50px;
+}
+.el-table--medium td, .el-table--medium th {
+     padding: 5px 0 !important; 
+}
 </style>

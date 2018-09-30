@@ -230,19 +230,19 @@
 				this.getDataList();
 			},
 			exportAllData(){
-					window.open("http://jizhangyl.natapp1.cc/jizhangyl/count/exportAllData?beginDate="+this.beginDate+"&endDate="+this.endDate)
+					window.open("https://www.jizhangyl.com/jizhangyl/count/exportAllData?beginDate="+this.beginDate+"&endDate="+this.endDate)
 			},
 			exportShop(){
-					window.open("http://jizhangyl.natapp1.cc/jizhangyl/count/exportShop?beginDate="+this.beginDate+"&endDate="+this.endDate)
+					window.open("https://www.jizhangyl.com/jizhangyl/count/exportShop?beginDate="+this.beginDate+"&endDate="+this.endDate)
 			},
 			exportBuyer(){
-					window.open("http://jizhangyl.natapp1.cc/jizhangyl/count/exportBuyer?beginDate="+this.beginDate+"&endDate="+this.endDate)
+					window.open("https://www.jizhangyl.com/jizhangyl/count/exportBuyer?beginDate="+this.beginDate+"&endDate="+this.endDate)
 			},
 				// 获取数据列表
       getDataList () {
 				this.dataListLoading = true
         this.$http({
-          url: 'http://jizhangyl.natapp1.cc/jizhangyl/count/fullSiteData',
+          url: 'https://www.jizhangyl.com/jizhangyl/count/fullSiteData',
 					method: 'get',
 					params: {
 							'beginDate': this.beginDate, 

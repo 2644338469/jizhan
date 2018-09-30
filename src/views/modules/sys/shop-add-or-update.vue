@@ -15,14 +15,15 @@
       </el-form-item>
       <el-form v-if="!dataForm.id" >
         <el-form-item label="商品分类" >
-          <el-autocomplete  popper-class="my-autocomplete" v-model="this.dataForm.productName" @change="queryChange" :trigger-on-focus="false" :fetch-suggestions="querySearch" placeholder="请输入商品jancode或名称" @select="handleSelect">
-              <div v-for="item in suggestList" :key="item.productId" :value="item.productName" >
-                <template>
-                  <div class="addr">{{ item.productJancode }}</div>
-                  <span class="name">{{ item.productName }}</span>
-                </template>
-              </div>
-          </el-autocomplete>
+	        <div v-for="item in suggestList" :key="item.productId" :value="item.productName" ></div>
+            <el-autocomplete  popper-class="my-autocomplete" v-model="this.dataForm.productName" @change="queryChange" :trigger-on-focus="false" :fetch-suggestions="querySearch" placeholder="请输入商品jancode或名称" @select="handleSelect">
+                  <template slot-scope="{ item }">
+                    <div class="mouse">
+                      <div class="addr">{{ item.productJancode }}</div>
+                      <span class="name">{{ item.productName }}</span>
+                    </div>
+                  </template>
+            </el-autocomplete>
       </el-form-item>
       </el-form>
       <el-form-item label="采购价" prop="cronExpression">
@@ -71,14 +72,8 @@
         },
         cateList: [],
         shopList: [],
-        dataRule: {
-//          paramKey: [
-//            { required: true, message: '参数名不能为空', trigger: 'blur' }
-//          ],
-//          paramValue: [
-//            { required: true, message: '参数值不能为空', trigger: 'blur' }
-//          ]
-        }
+        dataRule: {},
+        formLabelWidth: '120px'
       }
     },
     methods: {
@@ -131,7 +126,7 @@
       querySearch (queryString, cb) {
         console.log('querySearch run ')
         this.$http({
-          url: this.$http.adornUrl('/purchase/order/findByNameOrJan'),
+          url: this.$http.adornUrl('product/provider/getProductByJanOrName'),
           method: 'get',
           params: this.$http.adornParams({
             'param': queryString,
@@ -254,5 +249,6 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
+.mouse:hover {color:coral}
 </style>
 

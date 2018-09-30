@@ -88,7 +88,7 @@
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            // window.location.href='http://jizhangyl.natapp1.cc/jizhangyl/wechat/qrAuthorize?returnUrl=http://jizhangyl.natapp1.cc/jizhangyl/user/login'
+            // window.location.href='https://www.jizhangyl.com/jizhangyl/wechat/qrAuthorize?returnUrl=https://www.jizhangyl.com/jizhangyl/user/login'
           })
         }).catch(() => {})
       }

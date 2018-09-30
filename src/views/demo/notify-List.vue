@@ -51,7 +51,7 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" :disabled="scope.row.status === false " size="small" @click="sendinfo(scope.row.orderId)">再次发送手机短信提醒</el-button>
+          <el-button type="primary" :disabled="scope.row.status === false " size="small" @click="sendinfo(scope.row.orderId)">再次发送手机短信提醒</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -98,7 +98,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          // url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/list',
+          // url: 'https://www.jizhangyl.com/jizhangyl/shop/list',
           url: this.$http.adornUrl('/order/notifyList'),
           method: 'get',
           params: this.$http.adornParams({
@@ -119,7 +119,7 @@
       },
       sendinfo (orderId) {
           this.$http({
-          // url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/list',
+          // url: 'https://www.jizhangyl.com/jizhangyl/shop/list',
           url: this.$http.adornUrl('/order/orderNotify'),
           method: 'get',
           params: this.$http.adornParams({

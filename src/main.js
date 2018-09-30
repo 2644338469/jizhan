@@ -1,4 +1,7 @@
 import Vue from 'vue'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+// import App from './App.vue'
 import App from '@/App'
 import router from '@/router'                 // api: https://github.com/vuejs/vue-router
 import store from '@/store'                   // api: https://github.com/vuejs/vuex
@@ -10,7 +13,7 @@ import '@/assets/scss/index.scss'
 import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/axios
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
-
+Vue.use(ElementUI)
 Vue.use(VueCookie)
 Vue.config.productionTip = false
 
@@ -29,6 +32,7 @@ window.SITE_CONFIG['storeState'] = cloneDeep(store.state)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  render: h => h(App),
   router,
   store,
   template: '<App/>',

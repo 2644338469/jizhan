@@ -3,155 +3,157 @@
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-      <el-form-item label="商品名称" prop="shopName">
-        <el-input v-model="dataForm.shopName" placeholder="请输入商品名称"></el-input>
-      </el-form-item>
-      <el-form-item label="商品JAN CODE" prop="shopJan">
-        <el-input v-model="dataForm.shopJan" placeholder="商品JAN CODE"></el-input>
-      </el-form-item>
-      <el-form-item label="商品图片" prop="shopImage">
-<!--<el-upload
-          class="upload-demo"
-          ref="upload"
-          :action="url"
-          name="shopImage"
-          list-type="picture"
-          :limit="1"
-          :on-change="handlePreview"
-          :on-remove="handleRemove"
-          :on-success="handleSuccess"
-          :before-upload="handleBeforeUpload"
-          :data="dataForm"
-          :auto-upload="false">
-          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-        </el-upload> -->
-          <el-upload
-            class="avatar-uploader"
-            action="http://jizhangyl.natapp1.cc/jizhangyl/common/upload"
-            name="file"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="shopImage" :src="shopImage" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-      </el-form-item>
-      <el-form-item label="商品库存" prop="shopCount">
-        <el-input v-model="dataForm.shopCount" placeholder="商品库存"></el-input>
-      </el-form-item>
-      <el-form-item label="商品分类" prop="cateId">
-        <el-select v-model="cate.id" placeholder="请选择">
-          <el-option
-            v-for="item in cateList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="品牌分类" prop="brandId">
-        <el-select v-model="brand.id" placeholder="请选择">
-          <el-option
-            v-for="item in brandList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="每箱入数" prop="shopXcount">
-        <el-input v-model="dataForm.shopXcount" placeholder="每箱入数"></el-input>
-      </el-form-item>
-      <el-form-item label="商品规格" prop="shopFormat">
-        <el-input v-model="dataForm.shopFormat" placeholder="商品规格"></el-input>
-      </el-form-item>
-      <el-form-item label="是否抛货" prop="isPaogoods">
-        <el-switch
-          v-model="dataForm.isPaogoods"
-          active-text="是"
-          inactive-text="否">
-        </el-switch>
-      </el-form-item>
-      <el-form-item label="商品净重量" prop="shopJweight">
-        <el-col :span="4">
-          <el-input v-model="dataForm.shopJweight" placeholder="商品净重量"></el-input>
-        </el-col>
-      </el-form-item>
-      <el-form-item label="商品打包重量" prop="shopDweight">
-        <el-col :span="4">
-          <el-input v-model="dataForm.shopDweight" placeholder="商品打包重量"></el-input>
-        </el-col>
-      </el-form-item>
-      <el-form-item label="商品颜色" prop="shopColor">
-        <el-col :span="4">
-          <el-input v-model="dataForm.shopColor" placeholder="商品颜色"></el-input>
-        </el-col>
-      </el-form-item>
-      <el-form-item label="商品长宽高(厘米cm)" prop="shopWhg">
-        <template slot-scope="scope">
-          <el-row :gutter="10">
-            <el-col :span="4">
-              <el-input
-                size="small"
-                width="80"
-                placeholder="长(cm)"
-                v-model="height">
-              </el-input>
-            </el-col>
-            <el-col :span="4">
-              <el-input
-                size="small"
-                width="80"
-                placeholder="宽(cm)"
-                v-model="width">
-              </el-input>
-            </el-col>
-            <el-col :span="4">
-              <el-input
-                size="small"
-                width="80"
-                placeholder="高(cm)"
-                v-model="gao">
-              </el-input>
-            </el-col>
-          </el-row>
-        </template>
-      </el-form-item>
-      <el-form-item label="商品供货价" prop="shopGprice">
-        <el-input v-model="dataForm.shopGprice" placeholder="商品供货价"></el-input>
-      </el-form-item>
-      <el-form-item label="商品零售价" prop="shopLprice">
-        <el-input v-model="dataForm.shopLprice" placeholder="商品零售价"></el-input>
-      </el-form-item>
-      <el-form-item label="报关金额" prop="bcPrice">
-        <el-input v-model="dataForm.bcPrice" placeholder="报关金额"></el-input>
-      </el-form-item>
-      <el-form-item label="报关税率" prop="bcCess">
-        <el-input v-model="dataForm.bcCess" placeholder="报关税率"></el-input>
-      </el-form-item>
-      <el-form-item label="海关商品分类编号" prop="customsCateType">
-        <el-input v-model="dataForm.customsCateType" placeholder="海关商品分类编号"></el-input>
-      </el-form-item>
-      <el-form-item label="海关税则号列" prop="customsTariffLine">
-        <el-input v-model="dataForm.customsTariffLine" placeholder="海关税则号列"></el-input>
-      </el-form-item>
-      <el-form-item label="海关商品唯一码" prop="customsProductId">
-        <el-input v-model="dataForm.customsProductId" placeholder="海关商品唯一码"></el-input>
-      </el-form-item>
-      <el-form-item label="仓库打包识别码" prop="packCode">
-        <el-input v-model="dataForm.packCode" placeholder="仓库打包识别码"></el-input>
-      </el-form-item>
-      <el-form-item label="朋友圈文案" prop="wenan">
-        <el-input
-          type="textarea"
-          :rows="2"
-          placeholder="请输入内容"
-          v-model="dataForm.wenan">
-        </el-input>
-      </el-form-item>
-    </el-form>
+    <el-row :gutter="20">
+        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
+          <el-col :span="12">
+              <el-form-item label="商品名称" prop="shopName">
+                <el-input v-model="dataForm.shopName" placeholder="请输入商品名称"></el-input>
+              </el-form-item>
+              <el-form-item label="商品JAN CODE" prop="shopJan">
+                <el-input v-model="dataForm.shopJan" placeholder="商品JAN CODE"></el-input>
+              </el-form-item>
+              <el-form-item label="商品图片" prop="shopImage">
+        <!--<el-upload
+                  class="upload-demo"
+                  ref="upload"
+                  :action="url"
+                  name="shopImage"
+                  list-type="picture"
+                  :limit="1"
+                  :on-change="handlePreview"
+                  :on-remove="handleRemove"
+                  :on-success="handleSuccess"
+                  :before-upload="handleBeforeUpload"
+                  :data="dataForm"
+                  :auto-upload="false">
+                  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload> -->
+                  <el-upload
+                    class="avatar-uploader"
+                    action="https://www.jizhangyl.com/jizhangyl/common/upload"
+                    name="file"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                    <img v-if="shopImage" :src="shopImage" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
+              </el-form-item>
+              <el-form-item label="商品库存" prop="shopCount">
+                <el-input v-model="dataForm.shopCount" placeholder="商品库存"></el-input>
+              </el-form-item>
+              <el-form-item label="商品分类" prop="cateId">
+              <template>
+                <el-select v-model="cate.id" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in cateList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </template>
+              </el-form-item>
+              <el-form-item label="品牌分类" prop="brandId">
+                <el-select v-model="brand.id" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in brandList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="每箱入数" prop="shopXcount">
+                <el-input v-model="dataForm.shopXcount" placeholder="每箱入数"></el-input>
+              </el-form-item>
+              <el-form-item label="商品规格" prop="shopFormat">
+                <el-input v-model="dataForm.shopFormat" placeholder="商品规格"></el-input>
+              </el-form-item>
+              <el-form-item label="是否抛货" prop="isPaogoods">
+                <el-switch
+                  v-model="dataForm.isPaogoods"
+                  active-text="是"
+                  inactive-text="否">
+                </el-switch>
+              </el-form-item>
+              <el-form-item label="商品净重量" prop="shopJweight">               
+                  <el-input v-model="dataForm.shopJweight" placeholder="商品净重量"></el-input>
+              </el-form-item>
+              <el-form-item label="商品打包重量" prop="shopDweight">  
+                  <el-input v-model="dataForm.shopDweight" placeholder="商品打包重量"></el-input>
+              </el-form-item>
+              </el-col>
+              <el-col :span="12">
+              <el-form-item label="商品颜色" prop="shopColor">              
+                  <el-input v-model="dataForm.shopColor" placeholder="商品颜色"></el-input>
+              </el-form-item>
+              <el-form-item label="商品长宽高(厘米cm)" prop="shopWhg">
+                <template slot-scope="scope">
+                  <el-row :gutter="10">
+                    <el-col :span="4">
+                      <el-input
+                        size="small"
+                        width="80"
+                        placeholder="长(cm)"
+                        v-model="height">
+                      </el-input>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-input
+                        size="small"
+                        width="80"
+                        placeholder="宽(cm)"
+                        v-model="width">
+                      </el-input>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-input
+                        size="small"
+                        width="80"
+                        placeholder="高(cm)"
+                        v-model="gao">
+                      </el-input>
+                    </el-col>
+                  </el-row>
+                </template>
+              </el-form-item>
+              <el-form-item label="商品供货价" prop="shopGprice">
+                <el-input v-model="dataForm.shopGprice" placeholder="商品供货价"></el-input>
+              </el-form-item>
+              <el-form-item label="商品零售价" prop="shopLprice">
+                <el-input v-model="dataForm.shopLprice" placeholder="商品零售价"></el-input>
+              </el-form-item>
+              <el-form-item label="报关金额" prop="bcPrice">
+                <el-input v-model="dataForm.bcPrice" placeholder="报关金额"></el-input>
+              </el-form-item>
+              <el-form-item label="报关税率" prop="bcCess">
+                <el-input v-model="dataForm.bcCess" placeholder="报关税率"></el-input>
+              </el-form-item>
+              <el-form-item label="海关商品分类编号" prop="customsCateType">
+                <el-input v-model="dataForm.customsCateType" placeholder="海关商品分类编号"></el-input>
+              </el-form-item>
+              <el-form-item label="海关税则号列" prop="customsTariffLine">
+                <el-input v-model="dataForm.customsTariffLine" placeholder="海关税则号列"></el-input>
+              </el-form-item>
+              <el-form-item label="海关商品唯一码" prop="customsProductId">
+                <el-input v-model="dataForm.customsProductId" placeholder="海关商品唯一码"></el-input>
+              </el-form-item>
+              <el-form-item label="仓库打包识别码" prop="packCode">
+                <el-input v-model="dataForm.packCode" placeholder="仓库打包识别码"></el-input>
+              </el-form-item>
+              <el-form-item label="朋友圈文案" prop="wenan">
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入内容"
+                  v-model="dataForm.wenan">
+                </el-input>
+              </el-form-item>
+          </el-col>
+        </el-form>
+    </el-row>
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancel">取消</el-button>
       <!-- <el-button type="primary" @click="submitUpload()">确定</el-button> -->
@@ -166,7 +168,7 @@
     data () {
       return {
         visible: false,
-        dataList: '',
+        dataList:'',
         dataForm: {
           shopName: '',
           shopCount: '',
@@ -207,7 +209,7 @@
         fileLenght: 0,
         cateList: [],
         brandList: [],
-        url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/save',
+        url: 'https://www.jizhangyl.com/jizhangyl/shop/save',
         dataRule: {
           shopName: [
             { required: true, message: '商品名不能为空', trigger: 'blur' }
@@ -252,7 +254,7 @@
         this.getBrandList()
         if (this.productId) {
           this.$http({
-            url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/detail',
+            url: 'https://www.jizhangyl.com/jizhangyl/shop/detail',
             method: 'get',
             params: {
               'id': this.productId
@@ -304,14 +306,14 @@
                   this.brand.id = this.brandList[i].id
                 }
               }
-              this.url = 'http://jizhangyl.natapp1.cc/jizhangyl/shop/update'
+              this.url = 'https://www.jizhangyl.com/jizhangyl/shop/update'
             } else {
               this.dataForm = []
             }
             this.dataListLoading = false
           })
         } else {
-          this.url = 'http://jizhangyl.natapp1.cc/jizhangyl/shop/save'
+          this.url = 'https://www.jizhangyl.com/jizhangyl/shop/save'
           this.dataForm = []
           this.dataList = value
         }
@@ -434,9 +436,8 @@
       // dataFormSubmit () {
         
       // },
-      cancel() {
+      cancel(){
         this.visible = false
-        
       },
       getCateList () {
         this.$http({

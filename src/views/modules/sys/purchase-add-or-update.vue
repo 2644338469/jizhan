@@ -20,8 +20,10 @@
       <el-form-item label="选择商品">
         <el-autocomplete popper-class="my-autocomplete" v-model="shopName" @change="queryChange" :trigger-on-focus="false" :fetch-suggestions="querySearch" placeholder="请输入商品jancode或名称" @select="handleSelect">
           <template slot-scope="{ item }">
-            <div class="addr">{{ item.productJancode }}</div>
-            <span class="name">{{ item.productName }}</span>
+            <div class="mouse">
+              <div class="addr">{{ item.productJancode }}</div>
+              <span class="name">{{ item.productName }}</span>
+            </div>
           </template>
         </el-autocomplete>
       </el-form-item>
@@ -191,6 +193,10 @@
   }
 </script>
 <style>
+.mouse:hover {color:coral}
+  .el-scrollbar{
+    width:477px
+  }
 .my-autocomplete {
   li {
     line-height: normal;

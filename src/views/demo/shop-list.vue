@@ -162,7 +162,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          // url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/list',
+          // url: 'https://www.jizhangyl.com/jizhangyl/shop/list',
           url: this.$http.adornUrl('/shop/list'),
           method: 'get',
           params: this.$http.adornParams({
@@ -187,10 +187,10 @@
         console.log(528)
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/shop/findByName'),
+          url: this.$http.adornUrl('/shop/findByCriteria'),
           method: 'get',
           params: this.$http.adornParams({
-            'name': this.Name
+            'param': this.Name
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -247,7 +247,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            // url: 'http://jizhangyl.natapp1.cc/jizhangyl/shop/delete',
+            // url: 'https://www.jizhangyl.com/jizhangyl/shop/delete',
             url: this.$http.adornUrl('/shop/delete'),
             method: 'get',
             params: this.$http.adornParams({
@@ -286,7 +286,7 @@
         })
       },
       daochuShop () {
-        window.open('http://jizhangyl.natapp1.cc/jizhangyl/shop/export')
+        window.open('https://www.jizhangyl.com/jizhangyl/shop/export')
       },
       sortManage () {
          this.$router.push({path: '/shop-cate'})

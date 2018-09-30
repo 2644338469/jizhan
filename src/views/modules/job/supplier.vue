@@ -2,10 +2,18 @@
   <div class="mod-schedule">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.beanName" placeholder="bean名称" clearable></el-input>
+	<div v-for="item in this.ProductDataList" :key="item.Id" :value="item.productName" ></div>
+        <el-autocomplete  popper-class="my-autocomplete" v-model="dataForm.paramKey"  :trigger-on-focus="false" :fetch-suggestions="querySearch" placeholder="商品jancode或名称搜索" @select="handleSelect">
+                <template slot-scope="{ item }">
+		 <div class="mouse">
+                  <div class="addr">{{item.productJancode}}</div>
+		  <span class="name">{{ item.productName }}</span>
+                 </div>
+                </template>
+          </el-autocomplete>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <!-- <el-button @click="getProductByJanOrName()">查询</el-button> -->
         <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
       </el-form-item>
     </el-form>
@@ -41,42 +49,12 @@
               width="250"
               label="公司地址">
       </el-table-column>
-//      <el-table-column
-//              prop="legalPerson"
-//              header-align="center"
-//              align="center"
-//              label="公司法人">
-//      </el-table-column>
-//      <el-table-column
-//              prop="registeredFund"
-//              header-align="center"
-//              align="center"
-//              label="公司注册资本">
-//      </el-table-column>
-//      <el-table-column
-//              prop="depositBank"
-//              header-align="center"
-//              align="center"
-//              label="公司开户银行">
-//      </el-table-column>
-//      <el-table-column
-//              prop="bankAccount"
-//              header-align="center"
-//              align="center"
-//              label="银行账户">
-//      </el-table-column>
       <el-table-column
               prop="purchaseContact"
               header-align="center"
               align="center"
               label="采购联系人">
       </el-table-column>
-//      <el-table-column
-//              prop="contactPhone"
-//              header-align="center"
-//              align="center"
-//              label="联系电话">
-//      </el-table-column>
       <el-table-column
               prop="loanDate"
               header-align="center"
@@ -114,6 +92,9 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 供应商列表 -->
+    <shop-supplier-list v-if="supplierShow" ref="shopSupplierList">
+    </shop-supplier-list>
     <!-- 弹窗, 日志列表 -->
     <log v-if="logVisible" ref="log"></log>
   </div>
@@ -122,13 +103,16 @@
 <script>
   import AddOrUpdate from './supplier-add-or-update'
   import Log from './schedule-log'
+  import ShopSupplierList from '../sys/shop-supplier-list'
   export default {
     data () {
       return {
         dataForm: {
-          beanName: ''
+          paramKey: ''
         },
-        dataList: [],
+        supplierShow : false,
+        ProductDataList: [],
+      	dataList: [],
         pageIndex: 1,
         pageSize: 20,
         totalPage: 0,
@@ -136,12 +120,14 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        logVisible: false
+        logVisible: false,
+	suggestions: []
       }
     },
     components: {
       AddOrUpdate,
-      Log
+      Log,
+      ShopSupplierList
     },
     activated () {
       this.getDataList()
@@ -169,6 +155,30 @@
             this.totalNum = 0
           }
           this.dataListLoading = false
+	 })
+      },
+      querySearch(queryString , cb){
+        this.dataListLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/product/provider/getProductByJanOrName'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'param': queryString
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.ProductDataList = data.data
+            cb(this.ProductDataList)
+          } else {
+            this.ProductDataList = []            
+          }
+          this.dataListLoading = false
+        })
+      },
+      handleSelect(item) {
+        this.supplierShow = true
+       this.$nextTick(() => {
+            this.$refs.shopSupplierList.init(item.productId)
         })
       },
       // 每页数
@@ -240,3 +250,20 @@
     }
   }
 </script>
+<style>
+  .el-button--small, .el-button--small.is-round {
+     padding: 0 !important; 
+}
+.addr {
+    font-size: 12px;
+    color: #b4b4b4
+  }
+  .name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .mouse:hover {color:coral}
+  .el-scrollbar{
+    width:480px
+  }
+</style>

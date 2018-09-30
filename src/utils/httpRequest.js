@@ -31,7 +31,7 @@ http.interceptors.response.use(response => {
   console.log(response)
   if (response.data && response.data.code === 500106) { // 401, token失效
     clearLoginInfo()
-    window.location.href = 'http://jizhangyl.natapp1.cc/jizhangyl/wechat/qrAuthorize?returnUrl=http://jizhangyl.natapp1.cc/jizhangyl/user/login'
+    window.location.href = 'https://www.jizhangyl.com/jizhangyl/wechat/qrAuthorize?returnUrl=https://www.jizhangyl.com/jizhangyl/user/login'
   }
   return response
 }, error => {
@@ -44,8 +44,8 @@ http.interceptors.response.use(response => {
  */
 http.adornUrl = (actionName) => {
   // 非生产环境 && 开启代理, 接口前缀统一使用[/proxyApi/]前缀做代理拦截!
-  return 'http://jizhangyl.natapp1.cc/jizhangyl/' + actionName
-  // return 'http://jizhangyl.natapp1.cc/jizhangyl/' + actionName
+  return 'https://www.jizhangyl.com/jizhangyl/' + actionName
+  // return 'https://www.jizhangyl.com/jizhangyl/' + actionName
 }
 
 /**

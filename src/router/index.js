@@ -37,10 +37,12 @@ const mainRoutes = {
     { path: '/shop-cate', component: _import('demo/shop-cate'), name: 'shop-cate', meta: { title: '分类管理', isTab: true } },
     { path: '/shop-list', component: _import('demo/shop-list'), name: 'shop-list', meta: { title: '商品管理', isTab: true } },
     { path: '/data-report', component: _import('demo/data-report'), name: 'data-report', meta: { title: '数据报表', isTab: true } },
-    { path: '/data-expense', component: _import('modules/sys/expense'), name: 'expense', meta: { title: '后台用户返点', isTab: true } },
+    { path: '/data-expense', component: _import('modules/sys/expense'), name: 'expense', meta: { title: '用户管理', isTab: true } },
     { path: '/thumbnail', component: _import('demo/thumbnail'), name: 'thumbnail', meta: { title: '产品详情图', isTab: true } },
     { path: '/sys-shop', component: _import('modules/sys/shop'), name: 'shop', meta: { title: '商品库', isTab: true } },
-    { path: '/notify-List', component: _import('demo/notify-List'), name: 'notify-List', meta: { title: '订单信息提醒', isTab: true } }
+    { path: '/notify-List', component: _import('demo/notify-List'), name: 'notify-List', meta: { title: '订单信息提醒', isTab: true } },
+    { path: '/order-List', component: _import('modules/sys/orderList'), name: 'order-List', meta: { title: '订单管理', isTab: true } },
+    { path: '/deliveryDetail', component: _import('demo/deliveryDetail'), name: 'deliveryDetail', meta: { title: '出入库记录', isTab: true } },
   ]
 }
 
@@ -132,8 +134,20 @@ router.beforeEach((to, from, next) => {
           'orderNum': 6,
           'open': null,
           'list': null
-        }
-
+        },
+        {
+          'menuId': 32,
+          'parentId': 1,
+          'parentName': null,
+          'name': '航班信息',
+          'url': 'sys/flightInformation',
+          'perms': 'sys:flightInformation:list,sys:flightInformation:info,sys:flightInformation:save,sys:flightInformation:update,sys:flightInformation:delete',
+          'type': 1,
+          'icon': 'tixing',
+          'orderNum': 6,
+          'open': null,
+          'list': null
+        },
       ]
     }
   ]

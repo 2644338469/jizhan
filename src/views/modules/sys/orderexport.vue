@@ -1,33 +1,33 @@
 <template>
   <div class="block">
    	<div class="div-border clearfix">
-   		<el-date-picker
-      v-model="date1"
-      type="daterange"
-      align="right"
-      unlink-panels
-      value-format="yyyy-MM-dd HH:mm:ss"
-      range-separator="至"
-      start-placeholder="开始日期"
-      end-placeholder="结束日期">
-	    </el-date-picker>
 	    <el-row>
-			  <el-button type="primary" @click="CustomsExportOrder()">海关备案订单导出</el-button>
+        <el-date-picker
+          v-model="date1"
+          type="daterange"
+          align="right"
+          unlink-panels
+          value-format="yyyy-MM-dd HH:mm:ss"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+			  <el-button type="primary" style="margin-left: 20px;" @click="CustomsExportOrder()">海关备案订单导出</el-button>
 			</el-row>
    	</div>
    	<div class="div-border clearfix">
-   		<el-date-picker
-      v-model="date2"
-      type="daterange"
-      align="right"
-      value-format="yyyy-MM-dd HH:mm:ss"
-      unlink-panels
-      range-separator="至"
-      start-placeholder="开始日期"
-      end-placeholder="结束日期">
-	    </el-date-picker>
 	    <el-row>
-			  <el-button type="primary" @click="WarehouseExportOrder()">仓库打包订单导出</el-button>
+        <el-date-picker
+          v-model="date2"
+          type="daterange"
+          align="right"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          unlink-panels
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+			  <el-button type="primary" style="margin-left: 20px;" @click="WarehouseExportOrder()">仓库打包订单导出</el-button>
 			</el-row>
    	</div>
     <div class="import-exports clearfix">
@@ -54,7 +54,7 @@
                 :limit="3"
                 :on-exceed="handleExceed"
                 :file-list="fileListsone">
-                <el-button size="small" type="primary">买手订单导入</el-button>
+                <el-button type="primary">买手订单导入</el-button>
               </el-upload>
             </div>
             <div class="out">
@@ -94,12 +94,12 @@
               :before-remove="beforeRemove"
               multiple
               name="myfile"
-              action="http://jizhangyl.natapp1.cc/jizhangyl/express/import/"
+              action="https://www.jizhangyl.com/jizhangyl/express/import/"
               :limit="3"
               :on-exceed="handleExceed"
               :file-list="fileListstwo">
-              <el-button size="small" type="primary">物流单号库导入</el-button>
-              <span class="ordernum">剩余订单数:{{OrderNumber}}</span>
+              <el-button type="primary">物流单号库导入</el-button>
+              <span class="ordernum">剩余物流单号:{{OrderNumber}}</span>
             </el-upload>
           </div>
           <div class="dgmoban">
@@ -110,7 +110,7 @@
           <div class="div-border">
             <el-upload
               class="upload-demo clearfix"
-              action="http://jizhangyl.natapp1.cc/jizhangyl/order/report/importFromRepository"
+              action="https://www.jizhangyl.com/jizhangyl/order/report/importFromRepository"
               :on-preview="handlePreview"
               name="orderExcel"
               :on-remove="handleRemove"
@@ -119,7 +119,7 @@
               :limit="3"
               :on-exceed="handleExceed"
               :file-list="fileListsthree">
-              <el-button size="small" type="primary">已发货物流订单导入</el-button>
+              <el-button type="primary">已发货物流订单导入</el-button>
             </el-upload>
           </div>
         </div>
@@ -173,7 +173,7 @@ import axios from 'axios'
                  formData.append("inviteCode",this.invitezi);
                  var file = formData;
                 axios({
-                  url:'http://jizhangyl.natapp1.cc/jizhangyl/order/report/importFromBusiness',
+                  url:'https://www.jizhangyl.com/jizhangyl/order/report/importFromBusiness',
                   method: 'post',
                   data:file
               }).then((data)=>{
@@ -193,14 +193,14 @@ import axios from 'axios'
                 return false;
             },
       CustomsExportOrder () {
-        window.open('http://jizhangyl.natapp1.cc/jizhangyl/order/report/exportForCustoms?startTime=' + this.date1[0] + '&endTime=' + this.date1[1])
+        window.open('https://www.jizhangyl.com/jizhangyl/order/report/exportForCustoms?startTime=' + this.date1[0] + '&endTime=' + this.date1[1])
       },
       WarehouseExportOrder () {
-        window.open('http://jizhangyl.natapp1.cc/jizhangyl/order/report/exportForRepository?startTime=' + this.date2[0] + '&endTime=' + this.date2[1])
+        window.open('https://www.jizhangyl.com/jizhangyl/order/report/exportForRepository?startTime=' + this.date2[0] + '&endTime=' + this.date2[1])
       },
       ShopfileUpload (data) {
         axios({
-          url: 'http://jizhangyl.natapp1.cc/order/report/importFromBusiness',
+          url: 'https://www.jizhangyl.com/order/report/importFromBusiness',
           method: 'post',
           data: data.file
         }).then(({data}) => {
@@ -276,7 +276,7 @@ import axios from 'axios'
         })
       },
       handleShoper (val) {
-        // window.open('http://jizhangyl.natapp1.cc/jizhangyl//order/report/exportForBusiness?date' + this.date3)
+        // window.open('https://www.jizhangyl.com/jizhangyl//order/report/exportForBusiness?date' + this.date3)
         this.outVisible = true,
         this.$nextTick(()=> {
         console.log(val)
@@ -360,7 +360,7 @@ import axios from 'axios'
 .el-button--mini, .el-button--small {
     font-size: 14px !important;
 }
-.el-button--small, .el-button--small.is-round {
+.el-button--small{
     padding: 10px 15px !important;
 }
   .el-range-editor--medium.el-input__inner {

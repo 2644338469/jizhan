@@ -13,17 +13,26 @@
       :data="dataList"
       border
       v-loading="dataListLoading"
-      style="width: 100%;">
+      style="width: 100%;"
+      @cell-click="logHandle">
+      <el-table-column
+        prop="createTime"
+        header-align="center"
+        width="95"
+        align="center"
+        label="创建时间">
+      </el-table-column>
       <el-table-column
         prop="orderId"
         header-align="center"
+        width="160"
         align="center"
         label="采购单号">
       </el-table-column>
       <el-table-column
         prop="orderStatus"
         header-align="center"
-        width="130"
+        width="100"
         align="center"
         label="状态">
         <template slot-scope="scope">
@@ -32,6 +41,9 @@
           <el-tag v-if="scope.row.orderStatus === 2" size="small">已打款(全额)</el-tag>
           <el-tag v-if="scope.row.orderStatus === 3" size="small">已打款(部分)</el-tag>
           <el-tag v-if="scope.row.orderStatus === 4" size="small">已取消</el-tag>
+          <el-tag v-if="scope.row.orderStatus === 5" size="small">已入库(部分)</el-tag>
+          <el-tag v-if="scope.row.orderStatus === 6" size="small">已确认</el-tag>
+          <el-tag v-if="scope.row.orderStatus === 7" size="small">已完结</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -69,17 +81,21 @@
         prop="providerName"
         header-align="center"
         align="center"
-        width="130"
+        width="100"
         label="供应商">
       </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
+        width="340"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" :disabled="scope.row.orderStatus === 4 " round size="mini" @click="rukuHandle(scope.row)">入库</el-button>
-          <el-button type="primary" :disabled="scope.row.orderStatus != 0 " round size="mini" @click="deleteHandle(scope.row.orderId)">取消</el-button>
+          <el-button type="primary" id="sty" :disabled="(scope.row.orderStatus != 0 )&&(scope.row.orderStatus != 1)" round size="mini" @click="determineHandle(scope.row)">确认</el-button>
+          <el-button type="primary" id="sty" :disabled="(scope.row.orderStatus === 1)||(scope.row.orderStatus === 4 )||(scope.row.orderStatus === 7 )" round size="mini" @click="rukuHandle(scope.row)">入库</el-button>
+          <el-button type="primary" id="sty" :disabled="(scope.row.orderStatus === 3)||(scope.row.orderStatus === 4 )||(scope.row.orderStatus === 7 )" round size="mini" @click="paymentHandle(scope.row)">付款</el-button>
+          <el-button type="primary" id="sty" :disabled="(scope.row.orderStatus === 4 )||(scope.row.orderStatus === 7 )" round size="mini" @click="OrderEnd(scope.row.orderId)">完结</el-button>
+          <el-button type="info" :disabled="(scope.row.orderStatus === 0 )||(scope.row.orderStatus === 4)||(scope.row.orderStatus === 7 )" round size="mini" @click="deleteHandle(scope.row.orderId)">取消</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -94,12 +110,18 @@
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     <ruku v-if="rukuVisible" ref="ruku" @refreshDataList="getDataList"></ruku>
+    <payment v-if="paymentVisible" ref="payment"></payment>
+    <determine v-if="determineVisble" ref="determine"></determine>
+    <operation v-if="operationVisble" ref="operation"></operation>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './purchase-add-or-update'
   import Ruku from './purchase-ruku'
+  import Payment from './purchase-payment'
+  import Determine from './purchase-determine'
+  import Operation from './purchase-operation'
   export default {
     data () {
       return {
@@ -115,17 +137,23 @@
         value3: true,
         dataList: [],
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 20,
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        rukuVisible: false
+        rukuVisible: false,
+        paymentVisible: false,
+        determineVisble: false,
+        operationVisble: false
       }
     },
     components: {
       AddOrUpdate,
-      Ruku
+      Ruku,
+      Payment,
+      Determine,
+      Operation
     },
     activated () {
       this.getDataList()
@@ -139,7 +167,7 @@
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
-            'size': this.pageSize || 10
+            'size': this.pageSize || 20
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -172,11 +200,49 @@
           this.$refs.addOrUpdate.init(id)
         })
       },
+      //确认弹出
+      determineHandle (id) {
+        this.determineVisble = true
+        this.$nextTick(() => {
+          this.$refs.determine.init(id)
+        })
+      },
+      //入库弹出
       rukuHandle (id) {
         this.rukuVisible = true
         this.$nextTick(() => {
           this.$refs.ruku.init(id)
         })
+      },
+      //付款弹出
+      paymentHandle (id) {
+        this.paymentVisible = true
+        this.$nextTick(() => {
+          this.$refs.payment.init(id)
+        })
+      },
+      //完结订单
+      OrderEnd (id) {
+        console.log(id);
+        this.$confirm('此操作将完结采购单号为:'+id+', 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/purchase/order/finish'),
+            method: 'get',
+            params: this.$http.adornParams({
+              'orderId': id
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.getDataList()
+            } else {
+              this.$message.error(data.msg)
+            }
+         })
+        }).catch(() => {});
       },
       // 删除
       deleteHandle (id) {
@@ -209,6 +275,17 @@
             }
           })
         }).catch(() => {})
+      },
+      //查看凭证编辑
+      logHandle (data,column,cell,event) {
+        console.log("页面传值");
+        console.log(data);
+        if(column.label !== "操作"){
+          this.operationVisble = true
+          this.$nextTick(() => {
+            this.$refs.operation.init(data)
+          })
+        }
       },
       isNumber (val) {
         var regPos = /^\d+(\.\d+)?$/
@@ -281,9 +358,23 @@
       min-height: 400px;
     }
   }
-</style>
-<style>
+  .el-button--mini, .el-button--mini.is-round {
+    padding: 7px 10px;
+  }
   img{
     width:100%;
+  }
+  #sty {
+    color: #fff;
+    background-color: #ff3030;
+    border-color: #ff3030;
+  }
+  #sty.is-disabled, #sty.is-disabled:active, #sty.is-disabled:focus, #sty.is-disabled:hover {
+    color: #fff;
+    background-color: #17B3A3;
+    border-color: #17B3A3;
+  }
+  .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell {
+    padding-left: 3px;
   }
 </style>
