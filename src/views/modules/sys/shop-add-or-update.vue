@@ -250,5 +250,8 @@
     overflow: hidden;
   }
 .mouse:hover {color:coral}
+.el-scrollbar{
+    width:480px
+  }
 </style>
 
